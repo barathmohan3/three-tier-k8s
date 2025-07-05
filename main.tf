@@ -50,20 +50,21 @@ module "alb" {
   subnets         = module.vpc.public_subnets
   security_groups = [module.vpc.default_security_group_id]
 
-  target_groups = {
-    frontend = {
-      name_prefix      = "fe"
-      backend_protocol = "HTTP"
-      backend_port     = 80
-      target_type      = "ip"
-    },
-    backend = {
-      name_prefix      = "be"
-      backend_protocol = "HTTP"
-      backend_port     = 5000
-      target_type      = "ip"
-    }
+  target_groups = [
+  {
+    name_prefix      = "fe"
+    backend_protocol = "HTTP"
+    backend_port     = 80
+    target_type      = "ip"
+  },
+  {
+    name_prefix      = "be"
+    backend_protocol = "HTTP"
+    backend_port     = 5000
+    target_type      = "ip"
   }
+]
+
 
   # Listener with default forward to frontend target group
   http_tcp_listeners = [
