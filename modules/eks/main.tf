@@ -8,24 +8,27 @@ module "eks_core" {
   subnet_ids      = var.subnet_ids
 
   eks_managed_node_groups = {
-  backend = {
-    instance_types = ["t3.medium"]
-    min_size       = 1
-    max_size       = 3
-    desired_size   = 2
+    backend = {
+      instance_types = ["t3.medium"]
+      min_size       = 1
+      max_size       = 3
+      desired_size   = 2
 
-    # ✅ THIS FIXES IT
-    create_launch_template = true
-    use_custom_launch_template = true  # ← ADD THIS LINE
-    launch_template_name   = "backend-launch-template"
+      # ✅ Fix node creation failure
+      create_launch_template     = true
+      use_custom_launch_template = true
+      launch_template_name       = "backend-launch-template"
 
-    pre_bootstrap_user_data = <<-EOT
-      #!/bin/bash
-      /etc/eks/bootstrap.sh ${var.cluster_name}
-    EOT
+      metadata_options = {
+        instance_metadata_tags = "disabled"
+      }
+
+      pre_bootstrap_user_data = <<-EOT
+        #!/bin/bash
+        /etc/eks/bootstrap.sh ${var.cluster_name}
+      EOT
+    }
   }
-}
-
 
   fargate_profiles = {
     frontend = {
