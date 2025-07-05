@@ -1,6 +1,6 @@
 module "rds" {
   source = "terraform-aws-modules/rds/aws"
-
+  create_vpc = false
   identifier        = "support-portal-db"
   engine            = "postgres"
   engine_version    = "15.13"
