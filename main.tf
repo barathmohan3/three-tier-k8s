@@ -26,8 +26,31 @@ module "rds" {
   db_username      = var.db_username
   db_password      = var.db_password
   subnet_ids       = module.vpc.private_subnets
-  security_groups  = [module.vpc.default_security_group_id]
+  security_groups  = [aws_security_group.rds_sg.id]
   tags             = var.tags
+}
+
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-sg"
+  description = "Allow traffic to RDS"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description = "Allow Postgres access"
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # You can restrict to office/public IP
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = var.tags
 }
 
 module "secrets_manager" {
