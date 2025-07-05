@@ -3,7 +3,7 @@ module "rds" {
 
   identifier        = "support-portal-db"
   engine            = "postgres"
-  engine_version    = "14.4"
+  engine_version    = "15.4"
   instance_class    = "db.t3.medium"
   allocated_storage = 20
   db_name           = var.db_name
