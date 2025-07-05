@@ -1,10 +1,9 @@
-# Root main.tf
 provider "aws" {
   region = var.aws_region
 }
 
 module "vpc" {
-  source  = "./modules/vpc"
+  source          = "./modules/vpc"
   vpc_cidr        = var.vpc_cidr
   azs             = var.azs
   public_subnets  = var.public_subnets
@@ -22,17 +21,17 @@ module "eks" {
 }
 
 module "rds" {
-  source = "./modules/rds"
-  db_name         = var.db_name
-  db_username     = var.db_username
-  db_password     = var.db_password
-  subnet_ids      = module.vpc.private_subnets
-  security_groups = [module.vpc.default_security_group_id]
-  tags            = var.tags
+  source           = "./modules/rds"
+  db_name          = var.db_name
+  db_username      = var.db_username
+  db_password      = var.db_password
+  subnet_ids       = module.vpc.private_subnets
+  security_groups  = [module.vpc.default_security_group_id]
+  tags             = var.tags
 }
 
 module "secrets_manager" {
-  source = "./modules/secrets_manager"
+  source      = "./modules/secrets_manager"
   db_name     = var.db_name
   db_username = var.db_username
   db_password = var.db_password
@@ -46,9 +45,10 @@ module "alb" {
 
   name               = "support-portal-alb"
   load_balancer_type = "application"
-  vpc_id             = module.vpc.vpc_id
-  subnets            = module.vpc.public_subnets
-  security_groups    = [module.vpc.default_security_group_id]
+
+  vpc_id          = module.vpc.vpc_id
+  subnets         = module.vpc.public_subnets
+  security_groups = [module.vpc.default_security_group_id]
 
   target_groups = {
     frontend = {
@@ -69,7 +69,6 @@ module "alb" {
     http = {
       port     = 80
       protocol = "HTTP"
-
       default_action = {
         type = "fixed-response"
         fixed_response = {
@@ -88,12 +87,13 @@ module "ecr" {
   source = "./modules/ecr"
 }
 
+# ✅ CORRECT OUTPUTS BASED ON THE MODULE
 output "alb_dns_name" {
-  value = module.alb.load_balancer_dns_name
+  value = module.alb.dns_name
 }
 
 output "alb_arn" {
-  value = module.alb.load_balancer_arn
+  value = module.alb.arn
 }
 
 output "alb_security_group_id" {
@@ -107,4 +107,3 @@ output "http_listener_arn" {
 output "target_group_arns" {
   value = module.alb.target_group_arns
 }
-
