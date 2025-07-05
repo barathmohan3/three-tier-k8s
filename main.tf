@@ -87,7 +87,6 @@ module "ecr" {
   source = "./modules/ecr"
 }
 
-# ✅ CORRECT OUTPUTS BASED ON THE MODULE
 output "alb_dns_name" {
   value = module.alb.dns_name
 }
@@ -98,12 +97,4 @@ output "alb_arn" {
 
 output "alb_security_group_id" {
   value = module.alb.security_group_id
-}
-
-output "http_listener_arn" {
-  value = module.alb.listener_arns[0]
-}
-
-output "target_group_arns" {
-  value = module.alb.target_group_arns
 }
