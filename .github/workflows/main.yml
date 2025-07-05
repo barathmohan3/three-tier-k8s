@@ -38,6 +38,12 @@ jobs:
 
       - name: Terraform format
         run: terraform fmt
+      
+      - name: Clean .terraform and lock file
+        run: |
+          rm -rf .terraform
+          rm -f terraform.lock.hcl
+
 
       - name: Terraform init
         run: terraform init
