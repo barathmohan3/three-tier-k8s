@@ -16,6 +16,7 @@ module "eks_core" {
 
     # ✅ THIS FIXES IT
     create_launch_template = true
+    use_custom_launch_template = true  # ← ADD THIS LINE
     launch_template_name   = "backend-launch-template"
 
     pre_bootstrap_user_data = <<-EOT
