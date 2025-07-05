@@ -1,44 +1,56 @@
-module "eks_core" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.0"
+resource "aws_iam_role" "cluster_role" {
+  name = "${var.name}-eks-cluster-role"
+  assume_role_policy = data.aws_iam_policy_document.cluster_assume_role_policy.json
+}
 
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  vpc_id          = var.vpc_id
-  subnet_ids      = var.subnet_ids
+resource "aws_iam_role_policy_attachment" "cluster_attach" {
+  role       = aws_iam_role.cluster_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+}
 
-  eks_managed_node_groups = {
-    backend = {
-      instance_types = ["t3.medium"]
-      min_size       = 1
-      max_size       = 3
-      desired_size   = 2
+resource "aws_iam_role" "node_role" {
+  name = "${var.name}-eks-node-role"
+  assume_role_policy = data.aws_iam_policy_document.node_assume_role_policy.json
+}
 
-      # ✅ Fix node creation failure
-      create_launch_template     = true
-      use_custom_launch_template = true
-      launch_template_name       = "backend-launch-template"
+resource "aws_iam_role_policy_attachment" "worker_attach" {
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy",
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+    "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  ])
+  role       = aws_iam_role.node_role.name
+  policy_arn = each.value
+}
 
-      metadata_options = {
-        instance_metadata_tags = "disabled"
-      }
-
-      pre_bootstrap_user_data = <<-EOT
-        #!/bin/bash
-        /etc/eks/bootstrap.sh ${var.cluster_name}
-      EOT
+data "aws_iam_policy_document" "cluster_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["eks.amazonaws.com"]
     }
   }
+}
 
-  fargate_profiles = {
-    frontend = {
-      selectors = [
-        {
-          namespace = "frontend"
-        }
-      ]
+data "aws_iam_policy_document" "node_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
     }
   }
+}
 
-  tags = var.tags
+output "cluster_role_arn" {
+  value = aws_iam_role.cluster_role.arn
+}
+
+output "node_role_arn" {
+  value = aws_iam_role.node_role.arn
+}
+
+output "dependency" {
+  value = [aws_iam_role.cluster_role, aws_iam_role.node_role]
 }
