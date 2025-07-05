@@ -41,8 +41,8 @@ module "secrets_manager" {
 }
 
 module "alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "~> 9.0"
+  source  = "terraform-aws-modules/load-balancer/aws"
+  version = "~> 2.0"
 
   name               = "support-portal-alb"
   load_balancer_type = "application"
@@ -51,19 +51,39 @@ module "alb" {
   subnets         = module.vpc.public_subnets
   security_groups = [module.vpc.default_security_group_id]
 
-  target_groups = {
-    frontend = {
-      backend_protocol = "HTTP"
-      backend_port     = 80
+  target_groups = [
+    {
+      name_prefix         = "frontend"
+      backend_protocol    = "HTTP"
+      backend_port        = 80
+      target_type         = "ip"
+    },
+    {
+      name_prefix         = "backend"
+      backend_protocol    = "HTTP"
+      backend_port        = 5000
+      target_type         = "ip"
     }
-    backend = {
-      backend_protocol = "HTTP"
-      backend_port     = 5000
+  ]
+
+  listeners = [
+    {
+      port     = 80
+      protocol = "HTTP"
+      default_action = {
+        type           = "fixed-response"
+        fixed_response = {
+          content_type = "text/plain"
+          message_body = "ok"
+          status_code  = "200"
+        }
+      }
     }
-  }
+  ]
 
   tags = var.tags
 }
+
 
 module "ecr" {
   source = "./modules/ecr"
