@@ -50,31 +50,40 @@ module "alb" {
   subnets         = module.vpc.public_subnets
   security_groups = [module.vpc.default_security_group_id]
 
-  http_tcp_listeners = [
-    {
-      port               = 80
-      protocol           = "HTTP"
-      target_group_index = 0
-    }
-  ]
-
-  target_groups = [
-    {
-      name_prefix      = "frontend"
+  target_groups = {
+    frontend = {
+      name_prefix      = "fe"
       backend_protocol = "HTTP"
       backend_port     = 80
       target_type      = "ip"
     },
-    {
-      name_prefix      = "backend"
+    backend = {
+      name_prefix      = "be"
       backend_protocol = "HTTP"
       backend_port     = 5000
       target_type      = "ip"
     }
-  ]
+  }
+
+  listeners = {
+    http = {
+      port     = 80
+      protocol = "HTTP"
+
+      default_action = {
+        type = "fixed-response"
+        fixed_response = {
+          content_type = "text/plain"
+          message_body = "ok"
+          status_code  = "200"
+        }
+      }
+    }
+  }
 
   tags = var.tags
 }
+
 
 
 module "ecr" {
