@@ -1,10 +1,11 @@
-module "eks" {
-  source = "terraform-aws-modules/eks/aws"
+module "eks_core" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "~> 20.0"
 
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   vpc_id          = var.vpc_id
-  vpc_subnet_ids  = var.vpc_subnet_ids
+  subnet_ids      = var.subnet_ids
 
   eks_managed_node_groups = {
     backend = {
