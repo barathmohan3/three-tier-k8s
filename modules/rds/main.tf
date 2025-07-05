@@ -10,7 +10,7 @@ module "rds" {
   username          = var.db_username
   password          = var.db_password
   port              = 5432
-
+  family            = "postgres15"
   vpc_security_group_ids = var.security_groups
   subnet_ids             = var.subnet_ids
 
