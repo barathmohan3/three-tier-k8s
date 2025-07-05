@@ -65,21 +65,14 @@ module "alb" {
     }
   }
 
-  listeners = {
-    http = {
-      port     = 80
-      protocol = "HTTP"
-
-      default_action = {
-        type = "fixed-response"
-        fixed_response = {
-          content_type = "text/plain"
-          message_body = "ok"
-          status_code  = "200"
-        }
-      }
+  # Listener with default forward to frontend target group
+  http_tcp_listeners = [
+    {
+      port               = 80
+      protocol           = "HTTP"
+      target_group_index = 0
     }
-  }
+  ]
 
   tags = var.tags
 }
