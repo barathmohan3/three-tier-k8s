@@ -1,6 +1,6 @@
 module "alb_core" {
-  source = "terraform-aws-modules/alb/aws"
-  version = "~> 9.0"
+  source  = "terraform-aws-modules/alb/aws"
+  version = "~> 6.0"
 
   name               = "support-portal-alb"
   load_balancer_type = "application"
