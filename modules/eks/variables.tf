@@ -32,8 +32,3 @@ variable "cluster_role_dependency" {
   description = "Dependency to ensure IAM role is created before the cluster"
   type        = any
 }
-
-variable "eks_oidc_root_ca_thumbprint" {
-  description = "OIDC root CA thumbprint for IRSA"
-  type        = string
-}
