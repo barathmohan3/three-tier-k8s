@@ -1,4 +1,7 @@
-variable "aws_region" {}
+variable "aws_region" {
+  description = "The AWS region to deploy to"
+  type        = string
+}
 variable "vpc_cidr" {}
 variable "azs" { type = list(string) }
 variable "public_subnets" { type = list(string) }
