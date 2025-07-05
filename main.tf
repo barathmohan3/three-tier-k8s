@@ -11,13 +11,22 @@ module "vpc" {
   tags            = var.tags
 }
 
+module "eks_roles" {
+  source = "./modules/eks_roles"
+  name   = var.cluster_name
+}
+
 module "eks" {
-  source           = "./modules/eks"
-  cluster_name     = var.cluster_name
-  cluster_version  = var.cluster_version
-  vpc_id           = module.vpc.vpc_id
-  subnet_ids       = module.vpc.private_subnets
-  tags             = var.tags
+  source = "./modules/eks"
+
+  name                   = var.cluster_name
+  public_subnets         = module.vpc.public_subnets
+  private_subnets        = module.vpc.private_subnets
+  cluster_role_arn       = module.eks_roles.cluster_role_arn
+  node_role_arn          = module.eks_roles.node_role_arn
+  security_group_ids     = [module.vpc.default_security_group_id]
+  cluster_role_dependency = module.eks_roles.dependency
+  eks_oidc_root_ca_thumbprint = data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint
 }
 
 module "rds" {
