@@ -28,9 +28,6 @@ module "rds" {
   subnet_ids       = module.vpc.private_subnets
   security_groups  = [module.vpc.default_security_group_id]
   tags             = var.tags
-  parameter_group = {
-    family = "postgres15"
-  }
 }
 
 module "secrets_manager" {
