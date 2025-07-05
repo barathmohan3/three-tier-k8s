@@ -1,6 +1,5 @@
 module "rds" {
   source = "terraform-aws-modules/rds/aws"
-  create_vpc = false
   identifier        = "support-portal-db"
   engine            = "postgres"
   engine_version    = "15.13"
@@ -13,7 +12,7 @@ module "rds" {
   family            = "postgres15"
   vpc_security_group_ids = var.security_groups
   subnet_ids             = var.subnet_ids
-
+  create_vpc = false
   skip_final_snapshot = true
   tags = var.tags
 }
