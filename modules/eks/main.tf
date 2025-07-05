@@ -42,6 +42,48 @@ data "aws_iam_policy_document" "node_assume_role_policy" {
     }
   }
 }
+resource "aws_eks_node_group" "backend" {
+  cluster_name    = aws_eks_cluster.eks.name
+  node_group_name = "${var.cluster_name}-backend"
+  node_role_arn   = var.node_role_arn
+  subnet_ids      = var.subnet_ids
+
+  instance_types = ["t3.medium"]
+
+  scaling_config {
+    desired_size = 2
+    min_size     = 1
+    max_size     = 3
+  }
+
+  launch_template {
+    name = "backend-launch-template"
+    version = "$Latest"
+  }
+
+  tags = var.tags
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  depends_on = [aws_eks_cluster.eks]
+}
+resource "aws_eks_fargate_profile" "frontend" {
+  cluster_name           = aws_eks_cluster.eks.name
+  fargate_profile_name   = "${var.cluster_name}-frontend"
+  pod_execution_role_arn = var.node_role_arn # Or use a separate Fargate role
+
+  subnet_ids = var.subnet_ids
+
+  selector {
+    namespace = "frontend"
+  }
+
+  tags = var.tags
+
+  depends_on = [aws_eks_cluster.eks]
+}
 
 output "cluster_role_arn" {
   value = aws_iam_role.cluster_role.arn
