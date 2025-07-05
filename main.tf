@@ -95,7 +95,8 @@ output "alb_arn" {
 
 output "alb_security_group_id" {
   description = "ALB Security Group ID"
-  value       = module.alb.security_group_id
+  value       = module.alb.security_group.id
 }
+
 
 
