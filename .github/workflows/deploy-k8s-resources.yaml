@@ -36,7 +36,8 @@ jobs:
         run: |
           aws eks update-kubeconfig \
             --region us-east-2 \
-            --name support-portal-cluster
+            --name support-portal-eks
+
 
       - name: Deploy Kubernetes YAMLs
         run: |
