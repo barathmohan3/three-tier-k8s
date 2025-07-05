@@ -12,3 +12,6 @@ variable "db_name" {}
 variable "db_username" {}
 variable "db_password" {}
 variable "tags" { type = map(string) }
+variable "cluster_role_dependency" {
+  type = any
+}
