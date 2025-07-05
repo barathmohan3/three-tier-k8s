@@ -84,13 +84,17 @@ module "ecr" {
 }
 
 output "alb_dns_name" {
-  value = module.alb.dns_name
+  description = "DNS name of the ALB"
+  value       = module.alb.this_lb_dns_name
 }
 
 output "alb_arn" {
-  value = module.alb.arn
+  description = "ARN of the ALB"
+  value       = module.alb.this_lb_arn
 }
 
 output "alb_security_group_id" {
-  value = module.alb.security_group_id
+  description = "ALB Security Group ID"
+  value       = module.alb.this_security_group_id
 }
+
