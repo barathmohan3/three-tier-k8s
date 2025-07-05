@@ -26,11 +26,6 @@ module "eks" {
   node_role_arn               = module.eks_roles.node_role_arn
   security_group_ids          = [module.vpc.default_security_group_id]
   cluster_role_dependency     = module.eks_roles.dependency
-  eks_oidc_root_ca_thumbprint = data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint
-}
-
-data "tls_certificate" "oidc_thumbprint" {
-  url = module.eks.cluster_oidc_issuer_url
 }
 
 module "rds" {
