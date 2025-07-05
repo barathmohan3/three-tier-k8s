@@ -17,7 +17,7 @@ module "eks" {
   cluster_name    = var.cluster_name
   cluster_version = var.cluster_version
   vpc_id          = module.vpc.vpc_id
-  subnets         = module.vpc.private_subnets
+  vpc_subnet_ids   = module.vpc.private_subnets
   tags            = var.tags
 }
 
