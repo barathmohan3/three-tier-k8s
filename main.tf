@@ -2,6 +2,20 @@ provider "aws" {
   region = var.aws_region
 }
 
+module "vpc" {
+  source = "./modules/vpc"
+  vpc_cidr        = var.vpc_cidr
+  azs             = var.azs
+  public_subnets  = var.public_subnets
+  private_subnets = var.private_subnets
+  tags            = var.tags
+}
+
+module "eks_roles" {
+  source = "./modules/eks_roles"
+  name   = var.cluster_name
+}
+
 module "eks" {
   source = "./modules/eks"
 
@@ -15,9 +29,8 @@ module "eks" {
   eks_oidc_root_ca_thumbprint = data.tls_certificate.oidc_thumbprint.certificates[0].sha1_fingerprint
 }
 
-module "eks_roles" {
-  source = "./modules/eks_roles"
-  name   = var.cluster_name
+data "tls_certificate" "oidc_thumbprint" {
+  url = module.eks.cluster_oidc_issuer_url
 }
 
 module "rds" {
@@ -115,8 +128,3 @@ output "alb_arn" {
   description = "ARN of the ALB"
   value       = module.alb.lb_arn
 }
-
-data "tls_certificate" "oidc_thumbprint" {
-  url = module.eks.cluster_oidc_issuer_url
-}
-
