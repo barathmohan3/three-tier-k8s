@@ -1,9 +1,24 @@
-variable "cluster_name" {}
-variable "cluster_version" {}
-variable "vpc_id" {}
-variable "subnet_ids" {
-  type = list(string)
+variable "cluster_name" {
+  description = "Name of the EKS cluster"
+  type        = string
 }
+
+variable "cluster_version" {
+  description = "Kubernetes version"
+  type        = string
+}
+
+variable "vpc_id" {
+  description = "VPC ID"
+  type        = string
+}
+
+variable "subnet_ids" {
+  description = "Subnet IDs"
+  type        = list(string)
+}
+
 variable "tags" {
-  type = map(string)
+  description = "Tags to apply"
+  type        = map(string)
 }
