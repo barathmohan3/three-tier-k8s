@@ -128,3 +128,8 @@ output "alb_arn" {
   description = "ARN of the ALB"
   value       = module.alb.lb_arn
 }
+
+data "tls_certificate" "oidc_thumbprint" {
+  url = module.eks.cluster_oidc_issuer_url
+}
+
