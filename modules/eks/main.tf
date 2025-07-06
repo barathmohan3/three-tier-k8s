@@ -41,4 +41,6 @@ module "eks_core" {
   }
 
   tags = var.tags
+  create_kms_key             = var.create_kms_key
+  cluster_encryption_config  = var.cluster_encryption_config
 }
