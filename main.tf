@@ -21,7 +21,7 @@ module "eks" {
   create_kms_key = false
 
   cluster_encryption_config = {
-    provider_key_arn = arn:aws:kms:us-east-2:650251701672:key/4dbbf548-7ad4-4168-8884-c91b090723e8
+    provider_key_arn = "arn:aws:kms:us-east-2:650251701672:key/4dbbf548-7ad4-4168-8884-c91b090723e8"
     resources        = ["secrets"]
   }
 
